@@ -21,15 +21,15 @@
     <file src="include\MinHook.h" target="build\native\include\MinHook.h" />
 
     <!-- Static libs — x64 -->
-    <file src="build\VC17\x64\Release\libMinHook.x64.lib"
+    <file src="build\VC17\lib\Release\libMinHook.x64.lib"
           target="build\native\lib\Release\x64\libMinHook.x64.lib" />
-    <file src="build\VC17\x64\Debug\libMinHook.x64.lib"
+    <file src="build\VC17\lib\Debug\libMinHook.x64.lib"
           target="build\native\lib\Debug\x64\libMinHook.x64.lib" />
 
     <!-- Static libs — Win32 (x86) -->
-    <file src="build\VC17\x64\Release\libMinHook.x86.lib"
+    <file src="build\VC17\lib\Release\libMinHook.x86.lib"
           target="build\native\lib\Release\Win32\libMinHook.x86.lib" />
-    <file src="build\VC17\x64\Debug\libMinHook.x86.lib"
+    <file src="build\VC17\lib\Debug\libMinHook.x86.lib"
           target="build\native\lib\Debug\Win32\libMinHook.x86.lib" />
 
     <!-- MSBuild integration -->
