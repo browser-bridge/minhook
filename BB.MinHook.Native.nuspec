@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>BB.MinHook.Native</id>
+    <version>$version$</version>
+    <authors>BrowserBridge (BB)</authors>
+    <owners>BrowserBridge (BB)</owners>
+    <description>
+      MinHook — The Minimalistic x86/x64 API Hooking Library for Windows.
+      Forked and repackaged by BrowserBridge (BB) with C++17 / MSVC v143 (Visual Studio 2022) compatibility.
+      Provides static libraries for Release|x64, Debug|x64, Release|Win32, and Debug|Win32.
+    </description>
+    <projectUrl>https://github.com/BB/minhook</projectUrl>
+    <license type="expression">BSD-2-Clause</license>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <tags>native minhook hooking api-hook win32 c++ c++17 msvc static-library</tags>
+    <repository type="git" url="https://github.com/BB/minhook" />
+  </metadata>
+  <files>
+    <!-- Public header -->
+    <file src="include\MinHook.h" target="build\native\include\MinHook.h" />
+
+    <!-- Static libs — x64 -->
+    <file src="build\VC17\x64\Release\libMinHook.x64.lib"
+          target="build\native\lib\Release\x64\libMinHook.x64.lib" />
+    <file src="build\VC17\x64\Debug\libMinHook.x64.lib"
+          target="build\native\lib\Debug\x64\libMinHook.x64.lib" />
+
+    <!-- Static libs — Win32 (x86) -->
+    <file src="build\VC17\x64\Release\libMinHook.x86.lib"
+          target="build\native\lib\Release\Win32\libMinHook.x86.lib" />
+    <file src="build\VC17\x64\Debug\libMinHook.x86.lib"
+          target="build\native\lib\Debug\Win32\libMinHook.x86.lib" />
+
+    <!-- MSBuild integration -->
+    <file src="build\BB.MinHook.Native.props"
+          target="build\BB.MinHook.Native.props" />
+    <file src="build\BB.MinHook.Native.targets"
+          target="build\BB.MinHook.Native.targets" />
+  </files>
+</package>
