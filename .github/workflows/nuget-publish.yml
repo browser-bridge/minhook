@@ -1,0 +1,97 @@
+name: Publish BB.MinHook.Native NuGet Package
+
+on:
+  push:
+    tags:
+      - 'v*'          # e.g. v1.3.3  →  NuGet version 1.3.3
+  workflow_dispatch:  # allow manual publish from the Actions tab
+    branches:
+      - main
+
+permissions:
+  contents: read   # checkout
+  packages: write  # push to GitHub Packages
+
+jobs:
+  build-and-publish:
+    runs-on: windows-latest
+
+    steps:
+      # Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Toolchain
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v2
+        with:
+          msbuild-architecture: x64
+
+      # Build all four configurations
+      # The .vcxproj outputs to build/VC17/x64/<Configuration>/
+      - name: Build Release|x64
+        run: |
+          msbuild /m /p:Configuration=Release /p:Platform=x64 `
+                  /p:PlatformToolset=v143 `
+                  build/VC17/MinHookVC17.sln
+
+      - name: Build Debug|x64
+        run: |
+          msbuild /m /p:Configuration=Debug /p:Platform=x64 `
+                  /p:PlatformToolset=v143 `
+                  build/VC17/MinHookVC17.sln
+
+      - name: Build Release|Win32
+        run: |
+          msbuild /m /p:Configuration=Release /p:Platform=Win32 `
+                  /p:PlatformToolset=v143 `
+                  build/VC17/MinHookVC17.sln
+
+      - name: Build Debug|Win32
+        run: |
+          msbuild /m /p:Configuration=Debug /p:Platform=Win32 `
+                  /p:PlatformToolset=v143 `
+                  build/VC17/MinHookVC17.sln
+
+      # Derive version from git tag
+      # Tag  v1.3.3  →  NuGet version  1.3.3
+      - name: Derive NuGet version from tag
+        id: ver
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"   # e.g. "v1.3.3"
+          $version = $tag.TrimStart('v')
+          if (-not $version) { $version = "0.0.1-dev" }
+          echo "VERSION=$version" >> $env:GITHUB_OUTPUT
+          Write-Host "NuGet version: $version"
+
+      # Pack
+      - name: Pack NuGet package
+        shell: pwsh
+        run: |
+          nuget pack BB.MinHook.Native.nuspec `
+            -Version "${{ steps.ver.outputs.VERSION }}" `
+            -NoDefaultExcludes `
+            -OutputDirectory nupkg
+          Write-Host "Package contents:"
+          Get-ChildItem nupkg
+
+      # Publish to GitHub Packages
+      # GITHUB_TOKEN is provided automatically; no manual secret required.
+      - name: Add GitHub Packages NuGet source
+        shell: pwsh
+        run: |
+          nuget sources Add `
+            -Name "github" `
+            -Source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" `
+            -Username "${{ github.repository_owner }}" `
+            -Password "${{ secrets.GITHUB_TOKEN }}" `
+            -StorePasswordInClearText
+
+      - name: Push to GitHub Packages
+        shell: pwsh
+        run: |
+          nuget push nupkg\*.nupkg `
+            -Source "github" `
+            -ApiKey "${{ secrets.GITHUB_TOKEN }}" `
+            -SkipDuplicate

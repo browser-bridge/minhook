@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  BB.MinHook.Native.props
+  Injected by NuGet into every consuming project BEFORE compilation.
+  Adds the MinHook public include directory to the compiler search path.
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <!-- Absolute path to the package root (the folder that contains build\) -->
+    <BBMinHookRoot>$(MSBuildThisFileDirectory)..\</BBMinHookRoot>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>
+        $(BBMinHookRoot)build\native\include;%(AdditionalIncludeDirectories)
+      </AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
+</Project>

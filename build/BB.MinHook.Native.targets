@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  BB.MinHook.Native.targets
+  Injected by NuGet into every consuming project AFTER the default targets.
+  Selects the correct pre-built static lib based on Configuration and Platform
+  and adds it to the linker's AdditionalDependencies — no manual project edits needed.
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <BBMinHookRoot>$(MSBuildThisFileDirectory)..\</BBMinHookRoot>
+
+    <!-- Resolve lib name: x64 uses libMinHook.x64.lib, Win32 uses libMinHook.x86.lib -->
+    <_BBMinHookLibName Condition="'$(Platform)' == 'x64'">libMinHook.x64.lib</_BBMinHookLibName>
+    <_BBMinHookLibName Condition="'$(Platform)' == 'Win32'">libMinHook.x86.lib</_BBMinHookLibName>
+
+    <!-- Full path to the pre-built static lib -->
+    <_BBMinHookLibPath>$(BBMinHookRoot)build\native\lib\$(Configuration)\$(Platform)\$(_BBMinHookLibName)</_BBMinHookLibPath>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <Link>
+      <AdditionalDependencies>
+        $(_BBMinHookLibPath);%(AdditionalDependencies)
+      </AdditionalDependencies>
+    </Link>
+    <!-- Also cover static-lib consumers that use Lib instead of Link -->
+    <Lib>
+      <AdditionalDependencies>
+        $(_BBMinHookLibPath);%(AdditionalDependencies)
+      </AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+
+</Project>
